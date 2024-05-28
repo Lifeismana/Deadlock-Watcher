@@ -21,7 +21,7 @@ concurrency:
 env:
   TITLE: Deadlock Decompiler
   # github.repository as <account>/<repo>
-  GHCR_SLUG: ghcr.io/lifeismana/ddlck-vpk-decompiler
+  GHCR_SLUG: ghcr.io/steam-tracking/ddlck-vpk-decompiler
 
 jobs:
   build:
