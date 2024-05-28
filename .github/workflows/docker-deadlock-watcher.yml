@@ -7,12 +7,12 @@ on:
     branches: [ "main" ]
     # Publish semver tags as releases.
     paths:
-      - '.github/docker-deadlock-watcher.yml'
+      - '.github/workflows/docker-deadlock-watcher.yml'
       - 'Docker/**'
   pull_request:
     branches: [ "main" ]
     paths:
-      - '.github/docker-deadlock-watcher.yml'
+      - '.github/workflows/docker-deadlock-watcher.yml'
       - 'Docker/**'
 
 concurrency:

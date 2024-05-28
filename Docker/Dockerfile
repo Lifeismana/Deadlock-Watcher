@@ -36,8 +36,6 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
 COPY --from=dotnet /data/Decompiler /data/Decompiler/ 
 COPY --from=dotnet /data/DepotDownloader_export /data/DepotDownloader/DepotDownloader
 
-
-
 WORKDIR /data
 
 RUN useradd -m bot -d /data && chmod -R 755 /data && mkdir -p /data/.ssh && chmod 700 /data/.ssh && chown -R bot:bot /data
@@ -51,6 +49,5 @@ ENV PATH=/data/.venv/bin:$PATH
 
 COPY --chmod=777 files/script.sh /data/script.sh
 COPY --chmod=777 files/fix_encoding /data/fix_encoding
-COPY --chmod=777 files/vpk.txt /data/vpk.txt
 
 CMD ["/data/script.sh"]
