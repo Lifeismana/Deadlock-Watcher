@@ -4,13 +4,13 @@ on:
   schedule:
     - cron: '0 5 * * 1'
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
     # Publish semver tags as releases.
     paths:
       - '.github/docker-deadlock-watcher.yml'
       - 'Docker/**'
   pull_request:
-    branches: [ "master" ]
+    branches: [ "main" ]
     paths:
       - '.github/docker-deadlock-watcher.yml'
       - 'Docker/**'
