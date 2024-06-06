@@ -61,7 +61,7 @@ echo "Downloading Ddlck"
 #otherwise we use the manifests that we have
 
 if [ -z "$MANIFESTS" ]; then
-	~/DepotDownloader/DepotDownloader -username "$STEAM_USERNAME" -password "$STEAM_PASSWORD" -app 1422450 -dir . -validate
+	/data/DepotDownloader/DepotDownloader -username "$STEAM_USERNAME" -password "$STEAM_PASSWORD" -app 1422450 -dir . -validate
 else
 	#idk why i have to do this in such a weird way but it works
 	depots=""
@@ -74,7 +74,7 @@ else
 		done
 	done <<< "$MANIFESTS"
 	
-	~/DepotDownloader/DepotDownloader -username "$STEAM_USERNAME" -password "$STEAM_PASSWORD" -app 1422450 -depot $depots -manifest $manifests -dir . -validate
+	/data/DepotDownloader/DepotDownloader -username "$STEAM_USERNAME" -password "$STEAM_PASSWORD" -app 1422450 -depot $depots -manifest $manifests -dir . -validate
 fi
 
 echo "Processing Ddlck"
