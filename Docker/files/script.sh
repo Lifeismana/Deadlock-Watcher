@@ -5,17 +5,8 @@ set -e
 
 cd "${0%/*}"
 
-# if the env MANIFEST is not set we return an error
-[ -z "$GIT_URL" ] && echo "GIT_URL is missing" && exit 2
-
-# if SSH_KEY is set to a non empty string save it in id_ed25519 if it doesn't exist
-[ -n "$SSH_KEY" ] && [ ! -f ~/.ssh/id_ed25519 ] && echo "$SSH_KEY" > ~/.ssh/id_ed25519
 [ -n "$GIT_NAME" ] && git config --global user.name "$GIT_NAME"
 [ -n "$GIT_EMAIL" ] && git config --global user.email "$GIT_EMAIL"
-[ -n "$GPG_KEY" ] && gpg --batch --import <( echo "$GPG_KEY")
-[ -n "$GPG_KEY_ID" ] && git config --global user.signingkey "$GPG_KEY_ID"
-[ -f ~/.ssh/id_ed25519 ] && chmod 600 ~/.ssh/id_ed25519
-[ -n "$KNOWN_HOSTS" ] && echo "$KNOWN_HOSTS" > ~/.ssh/known_hosts
 
 ProcessVPK ()
 {
@@ -25,13 +16,11 @@ ProcessVPK ()
 	do
 		echo " > $file"
 
-		for ext in "vmat_c" "vtex_c" "gif"
-		do
-			~/Decompiler/Decompiler \
+		~/Decompiler/Decompiler \
 				--input "$file" \
 				--output "$(echo "$file" | sed -e 's/\.vpk$/\//g')" \
-				--vpk_decompile
-		done
+				--vpk_decompile \
+				--vpk_extensions "txt,lua,kv3,db,gameevents,vcss_c,vjs_c,vts_c,vxml_c,vsndevts_c,vsndstck_c,vpulse_c,vdata_c"
 	done <   <(find . -type f -name "*_dir.vpk" -print0)
 	wait
 	set -e
@@ -59,16 +48,7 @@ CreateCommit ()
 	fi
 }
 
-cd git_folder
-
-if [ ! -d "ddlckvpktracking" ]; then
-	git clone $GIT_URL ddlckvpktracking
-	cd ddlckvpktracking
-else
-	cd ddlckvpktracking
-	git fetch
-	git reset --hard origin/master
-fi
+cd $GITHUB_WORKSPACE
 
 echo "Cleaning Ddlck"
 
