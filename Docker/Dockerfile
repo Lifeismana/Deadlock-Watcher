@@ -38,14 +38,8 @@ COPY --from=dotnet /data/DepotDownloader_export /data/DepotDownloader/DepotDownl
 
 WORKDIR /data
 
-RUN useradd -m bot -d /data && chmod -R 755 /data && mkdir -p /data/.ssh && chmod 700 /data/.ssh && chown -R bot:bot /data
+RUN useradd -m bot -d /data -u 1001 && chmod -R 755 /data  && chown -R bot:bot /data
 USER bot
-RUN echo ".DepotDownloader" >> /data/.gitignore && \
-git config --global core.excludesfile ~/.gitignore && \
-mkdir -p /data/.local/share/IsolatedStorage && \
-mkdir -p /data/git_folder
-
-ENV PATH=/data/.venv/bin:$PATH
 
 COPY --chmod=777 files/script.sh /data/script.sh
 COPY --chmod=777 files/fix_encoding /data/fix_encoding
