@@ -24,6 +24,17 @@ RUN echo "BUILDARCH: $BUILDARCH" && \
     dotnet publish --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained --runtime linux-${ARCH} DepotDownloader/DepotDownloader.csproj && \
     mv ./DepotDownloader/bin/Release/net8.0/linux-${ARCH}/publish/DepotDownloader /data/DepotDownloader_export
 
+FROM base AS download
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN mkdir /data && \
+    cd /data && \
+    git clone https://github.com/Penguinwizzard/VPKTool.git && \
+    cd VPKTool && \
+    make
+
 FROM base as main
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     gawk \
@@ -35,6 +46,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=dotnet /data/Decompiler /data/Decompiler/ 
 COPY --from=dotnet /data/DepotDownloader_export /data/DepotDownloader/DepotDownloader
+COPY --from=download /data/VPKTool/vpktool /data/VPKTool/vpktool
 
 WORKDIR /data
 
