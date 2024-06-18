@@ -45,6 +45,10 @@ cd $GITHUB_WORKSPACE
 
 cd deadlock
 
+# link .support if it doesn't exist
+[ ! -d ".support" ] && ln -s /data/.support .support
+[ ! -d ".fix_encoding" ] && ln -s /data/fix_encoding fix_encoding
+
 echo "Cleaning Ddlck"
 
 find . -type f -not \( -path './README.md' -o -path './.git*' -o -path '*.vpk' -o -path "steam.inf" -o -path "./.DepotDownloader" \) -delete 
@@ -89,9 +93,6 @@ do
 			--output "$(echo "$file" | sed -e 's/\.vpk$/\//g')" \
 			--vpk_decompile \
 			--vpk_extensions "txt,lua,kv3,db,gameevents,vcss_c,vjs_c,vts_c,vxml_c,vsndevts_c,vsndstck_c,vpulse_c,vdata_c"
-
-	# https://github.com/Penguinwizzard/VPKTool
-	/data/VPKTool/vpktool "$file" > "${file%.*}.txt"
 done <   <(find . -type f -name "*_dir.vpk" -print0)
 set -e
 
