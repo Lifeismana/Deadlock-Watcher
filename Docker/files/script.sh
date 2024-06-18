@@ -36,12 +36,12 @@ cd $GITHUB_WORKSPACE
 . ./common.sh
 
 
-# create .support if it doesn't exist
-[ ! -d ".support" ] && mkdir .support
-# link elfstrings if it doesn't exist
-[ ! -L ".support/elfstrings" ] && ln -s /data/elfstrings .support/elfstrings
-# link vpktool if it doesn't exist
-[ ! -L ".support/vpktool" ] && ln -s /data/VPKTool/vpktool .support/vpktool
+# link .support if it doesn't exist
+[ ! -d ".support" ] && ln -s /data/.support .support
+
+# link ProtobufDumper if it doesn't exist
+[ ! -L "~/ProtobufDumper" ] && ln -s /data/ProtobufDumper ~/ProtobufDumper
+
 
 cd deadlock
 

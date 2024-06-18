@@ -25,6 +25,11 @@ RUN echo "BUILDARCH: $BUILDARCH" && \
     dotnet publish --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained --runtime linux-${ARCH} Decompiler/Decompiler.csproj && \
     mv ./Decompiler/bin/Release/linux-${ARCH}/publish /data/Decompiler && \
     cd /data && \
+    git clone https://github.com/SteamRE/SteamKit.git && \
+    cd SteamKit && \
+    dotnet build -c Release Resources/ProtobufDumper/ProtobufDumper/ProtobufDumper.csproj && \
+    dotnet publish --configuration Release -p:PublishSingleFile=true -p:DebugType=embedded --self-contained --runtime linux-x64  Resources/ProtobufDumper/ProtobufDumper/ProtobufDumper.csproj && \
+    cd /data && \
     git clone --depth=1 https://github.com/SteamRE/DepotDownloader.git && \
     cd DepotDownloader && \
     dotnet build -c Release ./DepotDownloader/DepotDownloader.csproj && \
@@ -52,10 +57,11 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-mbstring \
     openssh-client \
     && rm -rf /var/lib/apt/lists/*
-COPY --from=go /go/elf-strings/elf-strings /data/elfstrings/elfstrings
+COPY --from=go /go/elf-strings/elf-strings /data/.support/elfstrings/elfstrings
+COPY --from=dotnet /data/SteamKit/Resources/ProtobufDumper/ProtobufDumper/bin/Release/linux-x64/publish/ /data/ProtobufDumper
 COPY --from=dotnet /data/Decompiler /data/Decompiler/ 
 COPY --from=dotnet /data/DepotDownloader_export /data/DepotDownloader/DepotDownloader
-COPY --from=download /data/VPKTool/vpktool /data/VPKTool/vpktool
+COPY --from=download /data/VPKTool/vpktool /data/.support/vpktool
 
 WORKDIR /data
 
