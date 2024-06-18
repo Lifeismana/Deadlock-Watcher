@@ -7,6 +7,8 @@ cd "${0%/*}"
 
 [ -n "$GIT_NAME" ] && git config --global user.name "$GIT_NAME"
 [ -n "$GIT_EMAIL" ] && git config --global user.email "$GIT_EMAIL"
+[ -n "$GPG_KEY" ] && gpg --batch --import <( echo "$GPG_KEY")
+[ -n "$GPG_KEY_ID" ] && git config --global user.signingkey "$GPG_KEY_ID"
 
 
 FixUCS2 ()
