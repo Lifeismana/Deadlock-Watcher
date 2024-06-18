@@ -8,25 +8,6 @@ cd "${0%/*}"
 [ -n "$GIT_NAME" ] && git config --global user.name "$GIT_NAME"
 [ -n "$GIT_EMAIL" ] && git config --global user.email "$GIT_EMAIL"
 
-ProcessVPK ()
-{
-	echo "> Processing VPKs"
-	set +e
-	while IFS= read -r -d '' file
-	do
-		echo " > $file"
-
-		/data/Decompiler/Decompiler \
-				--input "$file" \
-				--output "$(echo "$file" | sed -e 's/\.vpk$/\//g')" \
-				--vpk_decompile \
-				--vpk_extensions "txt,lua,kv3,db,gameevents,vcss_c,vjs_c,vts_c,vxml_c,vsndevts_c,vsndstck_c,vpulse_c,vdata_c"
-
-		# https://github.com/Penguinwizzard/VPKTool
-		/data/VPKTool/vpktool "$file" > "${file%.*}.txt"
-	done <   <(find . -type f -name "*_dir.vpk" -print0)
-	set -e
-}
 
 FixUCS2 ()
 {
@@ -50,7 +31,16 @@ CreateCommit ()
 	fi
 }
 
-cd $GITHUB_WORKSPACE
+cd $GITHUB_WORKSPACE/gametracking/
+
+# create .support if it doesn't exist
+[ ! -d ".support" ] && mkdir .support
+# link elfstrings if it doesn't exist
+[ ! -L ".support/elfstrings" ] && ln -s /data/elfstrings .support/elfstrings
+# link vpktool if it doesn't exist
+[ ! -L ".support/vpktool" ] && ln -s /data/VPKTool/vpktool .support/vpktool
+
+cd deadlock
 
 echo "Cleaning Ddlck"
 
@@ -79,9 +69,30 @@ else
 	/data/DepotDownloader/DepotDownloader -username "$STEAM_USERNAME" -password "$STEAM_PASSWORD" -app 1422450 -depot $depots -manifest $manifests -dir . -validate
 fi
 
+. ../common.sh
+
 echo "Processing Ddlck"
 
+ProcessDepot ".so"
+ProcessDepot ".dll"
 ProcessVPK
+
+echo "> Processing VPKs"
+set +e
+while IFS= read -r -d '' file
+do
+	echo " > $file"
+
+	/data/Decompiler/Decompiler \
+			--input "$file" \
+			--output "$(echo "$file" | sed -e 's/\.vpk$/\//g')" \
+			--vpk_decompile \
+			--vpk_extensions "txt,lua,kv3,db,gameevents,vcss_c,vjs_c,vts_c,vxml_c,vsndevts_c,vsndstck_c,vpulse_c,vdata_c"
+
+	# https://github.com/Penguinwizzard/VPKTool
+	/data/VPKTool/vpktool "$file" > "${file%.*}.txt"
+done <   <(find . -type f -name "*_dir.vpk" -print0)
+set -e
 
 FixUCS2
 

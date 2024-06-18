@@ -5,6 +5,13 @@ RUN echo '\nAcquire::Retries "100";\nAcquire::https::Timeout "240";\nAcquire::ht
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
+FROM golang:1.22 AS go
+RUN git clone https://github.com/xPaw/elf-strings && \
+    cd elf-strings && \
+    go mod init elf-strings && \
+    go get github.com/ianlancetaylor/demangle && \
+    go build -o elf-strings
+
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS dotnet
 ARG BUILDARCH
 # https://stackoverflow.com/questions/70369368/check-architecture-in-dockerfile-to-get-amd-arm
@@ -37,6 +44,7 @@ RUN mkdir /data && \
 
 FROM base as main
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    binutils \
     gawk \
     gnupg \
     php \
@@ -44,6 +52,7 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     php-mbstring \
     openssh-client \
     && rm -rf /var/lib/apt/lists/*
+COPY --from=go /go/elf-strings/elf-strings /data/elfstrings/elfstrings
 COPY --from=dotnet /data/Decompiler /data/Decompiler/ 
 COPY --from=dotnet /data/DepotDownloader_export /data/DepotDownloader/DepotDownloader
 COPY --from=download /data/VPKTool/vpktool /data/VPKTool/vpktool
