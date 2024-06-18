@@ -71,4 +71,8 @@ USER bot
 COPY --chmod=777 files/script.sh /data/script.sh
 COPY --chmod=777 files/fix_encoding /data/fix_encoding
 
+RUN mkdir -p /data/ValveProtobufs && \
+echo "#!/bin/bash\necho \"HELLO I'M A GHOST \"" >> /data/ValveProtobufs/update.sh && \
+chmod -R 755 /data/ValveProtobufs
+
 CMD ["/data/script.sh"]

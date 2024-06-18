@@ -43,6 +43,8 @@ cd $GITHUB_WORKSPACE
 
 # link ProtobufDumper if it doesn't exist
 [ ! -L "~/ProtobufDumper" ] && ln -s /data/ProtobufDumper ~/ProtobufDumper
+# link ValveProtobufs if it doesn't exist
+[ ! -L "~/ValveProtobufs" ] && ln -s /data/ValveProtobufs ~/ValveProtobufs
 
 
 cd deadlock
